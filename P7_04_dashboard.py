@@ -120,7 +120,7 @@ def prediction(model,df_test,id):
 	'''Fonction permettant de prédire la capacité du client à rembourser son emprunt.
 	les paramètres sont le modèle, le dataframe et l'ID du client'''
 	y_pred=model.predict_proba(df_test)[id,1]
-	decision=np.where(y_pred>0.5,"Rejected","Approved")
+	decision=np.where(y_pred>0.48,"Rejected","Approved")
 	return y_pred,decision
 
 def color(pred):
@@ -160,7 +160,7 @@ def comparaison(df_test,db_test,idx_client):
 	idx_neigh,total=get_neigh(df_test,idx_client)
 	db_neigh=db_test.loc[idx_neigh,['SK_ID_CURR','CODE_GENDER','YEARS_BIRTH','NAME_FAMILY_STATUS','CNT_CHILDREN',
 	'NAME_EDUCATION_TYPE','FLAG_OWN_CAR','FLAG_OWN_REALTY','NAME_HOUSING_TYPE',
-	'NAME_INCOME_TYPE','AMT_INCOME_TOTAL','AMT_CREDIT','AMT_ANNUITY']]
+	'NAME_INCOME_TYPE','AMT_INCOME_TOTAL','AMT_CREDIT','AMT_ANNUITY','TARGET']]
 	db_neigh['AMT_INCOME_TOTAL']=db_neigh['AMT_INCOME_TOTAL'].apply(lambda x: int(x))
 	db_neigh['AMT_CREDIT']=db_neigh['AMT_CREDIT'].apply(lambda x: int(x))
 	db_neigh['AMT_ANNUITY']=db_neigh['AMT_ANNUITY'].apply(lambda x: x if pd.isna(x) else int(x))
@@ -208,8 +208,10 @@ def chart_kde(title,row,df,col,client):
 	with row:
 		st.subheader(title)
 		fig,ax = plt.subplots()
-		sns.kdeplot(df[col],color='steelblue')
-		plt.axvline(x=df.loc[client,col],ymax=0.95,color='red')
+		sns.kdeplot(df.loc[df['TARGET']==0,col],color='green', label = 'Target == 0')
+		sns.kdeplot(df.loc[df['TARGET']==1,col],color='red', label = 'Target == 1')
+		plt.axvline(x=df.loc[client,col],ymax=0.95,color='black')
+		plt.legend()
 		st.pyplot(fig)
 
 def chart_bar(title,row,df,col,client):
@@ -217,10 +219,30 @@ def chart_bar(title,row,df,col,client):
 	with row:
 		st.subheader(title)
 		fig,ax = plt.subplots()
-		sns.countplot(y=df[col],color='steelblue')
-		plt.axhline(y=df.loc[client,col],xmax=0.95,color='red')
-		st.pyplot(fig)
+		data=df[['TARGET',col]]
+		if data[col].dtypes!='object':
+			data[col]=data[col].astype('str')
 
+			data1=round(data[col].loc[data['TARGET']==1].value_counts()/data[col].loc[data['TARGET']==1].value_counts().sum()*100,2)
+			data0=round(data[col].loc[data['TARGET']==0].value_counts()/data[col].loc[data['TARGET']==0].value_counts().sum()*100,2)
+			data=pd.concat([pd.DataFrame({"Pourcentage":data0,'TARGET':0}),pd.DataFrame({'Pourcentage':data1,'TARGET':1})]).reset_index().rename(columns={'index':col})
+			sns.barplot(data=data,x='Pourcentage', y=col, hue='TARGET', palette=['green','red'], order=sorted(data[col].unique()));
+			
+			data[col]=data[col].astype('int64')
+
+			row.write(df.loc[client,col])
+			plt.axhline(y=sorted(data[col].unique()).index(df.loc[client,col]),xmax=0.95,color='black',linewidth=4)
+			st.pyplot(fig)
+		else:
+
+			data1=round(data[col].loc[data['TARGET']==1].value_counts()/data[col].loc[data['TARGET']==1].value_counts().sum()*100,2)
+			data0=round(data[col].loc[data['TARGET']==0].value_counts()/data[col].loc[data['TARGET']==0].value_counts().sum()*100,2)
+			data=pd.concat([pd.DataFrame({"Pourcentage":data0,'TARGET':0}),pd.DataFrame({'Pourcentage':data1,'TARGET':1})]).reset_index().rename(columns={'index':col})
+			sns.barplot(data=data,x='Pourcentage', y=col, hue='TARGET', palette=['green','red'], order=sorted(data[col].unique()));
+			
+			row.write(df.loc[client,col])
+			plt.axhline(y=sorted(data[col].unique()).index(df.loc[client,col]),xmax=0.95,color='black',linewidth=4)
+			st.pyplot(fig)
 
 def main():
 	"""Fonction principale permettant l'affichage de la fenêtre latérale avec les 3 onglets.
