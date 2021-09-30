@@ -21,17 +21,17 @@ def load_data():
 	'''
 
 	# Chargement du modèle pré-entrainé	
-	pickle_in = dvc.api.read('lgbm_model.pkl',
+	pickle_in = dvc.api.read('Data/lgbm_model.pkl',
     repo='https://github.com/StevPav/OCR_Data_Scientist_P7.git',
     mode='rb')
 	lgbm=pickle.loads(pickle_in)
 
 	#Chargement des données de test
-	db_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/93c4169e3ae367ce4503a92ecd6a8a336e3adb0b/df_app.csv?raw=true')
+	db_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/70ed8a21e2d52f1d7c927f0ea5d496e5c77de617/Data/df_app.csv?raw=true')
 	db_test['YEARS_BIRTH']=(db_test['DAYS_BIRTH']/-365).apply(lambda x: int(x))
 	db_test=db_test.reset_index(drop=True)
-	df_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/93c4169e3ae367ce4503a92ecd6a8a336e3adb0b/df_test.csv?raw=true')
-	logo=imread("https://github.com/StevPav/OCR_Data_Scientist_P7/blob/f502618190196436b360937f1818ac7ab2a8091c/logo.png?raw=true")
+	df_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/70ed8a21e2d52f1d7c927f0ea5d496e5c77de617/Data/df_test.csv?raw=true')
+	logo=imread("https://github.com/StevPav/OCR_Data_Scientist_P7/blob/70ed8a21e2d52f1d7c927f0ea5d496e5c77de617/Data/logo.png?raw=true")
 
 	#Calcul des SHAP values
 	explainer = shap.TreeExplainer(lgbm)
