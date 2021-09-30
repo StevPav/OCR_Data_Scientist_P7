@@ -27,10 +27,10 @@ def load_data():
 	lgbm=pickle.loads(pickle_in)
 
 	#Chargement des données de test
-	db_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/f1de2d6a3abe6484aff4b941e720b139dfb04649/df_app.csv?raw=true')
+	db_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/93c4169e3ae367ce4503a92ecd6a8a336e3adb0b/df_app.csv?raw=true')
 	db_test['YEARS_BIRTH']=(db_test['DAYS_BIRTH']/-365).apply(lambda x: int(x))
 	db_test=db_test.reset_index(drop=True)
-	df_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/f1de2d6a3abe6484aff4b941e720b139dfb04649/df_test.csv?raw=true')
+	df_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/93c4169e3ae367ce4503a92ecd6a8a336e3adb0b/df_test.csv?raw=true')
 
 	#Calcul des SHAP values
 	explainer = shap.TreeExplainer(lgbm)
