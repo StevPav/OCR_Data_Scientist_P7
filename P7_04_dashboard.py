@@ -99,17 +99,17 @@ def score_viz(lgbm,df_test,client,exp_value,shap_values):
     number = {'font':{'size':48}},
     domain = {'x': [0, 1], 'y': [0, 1]},
     title = {'text': result.tolist(), 'font': {'size': 28, 'color':color(result)}},
-    delta = {'reference': 0.5, 'increasing': {'color': "red"},'decreasing':{'color':'green'}},
+    delta = {'reference': 0.48, 'increasing': {'color': "red"},'decreasing':{'color':'green'}},
     gauge = {
         'axis': {'range': [0,1], 'tickcolor': color(result)},
         'bar': {'color': color(result)},
         'steps': [
-            {'range': [0,0.5], 'color': 'lightgreen'},
-            {'range': [0.5,1], 'color': 'lightcoral'}],
+            {'range': [0,0.48], 'color': 'lightgreen'},
+            {'range': [0.48,1], 'color': 'lightcoral'}],
         'threshold': {
             'line': {'color': "black", 'width': 5},
             'thickness': 1,
-            'value': 0.5}}))
+            'value': 0.48}}))
 
 
 	st.plotly_chart(fig)
