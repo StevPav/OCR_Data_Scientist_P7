@@ -11,9 +11,9 @@ from sklearn.neighbors import NearestNeighbors
 import seaborn as sns
 import dvc.api
 import lightgbm
+from matplotlib.image import imread
 
 st.set_page_config(layout="wide")
-
 
 def load_data():
 	'''Fonction chargeant et calculant les données nécessaires au dashboard.
@@ -31,12 +31,13 @@ def load_data():
 	db_test['YEARS_BIRTH']=(db_test['DAYS_BIRTH']/-365).apply(lambda x: int(x))
 	db_test=db_test.reset_index(drop=True)
 	df_test=pd.read_csv('https://github.com/StevPav/OCR_Data_Scientist_P7/blob/93c4169e3ae367ce4503a92ecd6a8a336e3adb0b/df_test.csv?raw=true')
+	logo=imread("https://github.com/StevPav/OCR_Data_Scientist_P7/blob/f502618190196436b360937f1818ac7ab2a8091c/logo.png?raw=true")
 
 	#Calcul des SHAP values
 	explainer = shap.TreeExplainer(lgbm)
 	shap_values = explainer.shap_values(df_test)[1]
 	exp_value=explainer.expected_value[1]
-	return db_test,df_test,shap_values,lgbm,exp_value
+	return db_test,df_test,shap_values,lgbm,exp_value,logo
 
 
 def tab_client(db_test):
@@ -204,7 +205,7 @@ def display_charts(df,client):
 	'NAME_INCOME_TYPE','AMT_INCOME_TOTAL','AMT_CREDIT','AMT_ANNUITY']])
 
 def chart_kde(title,row,df,col,client):
-	"""Définition des graphes KDE avec une barre verticale indiquant la position du client"""
+	"""Définition des graphes KDE avec une ligne verticale indiquant la position du client"""
 	with row:
 		st.subheader(title)
 		fig,ax = plt.subplots()
@@ -215,7 +216,7 @@ def chart_kde(title,row,df,col,client):
 		st.pyplot(fig)
 
 def chart_bar(title,row,df,col,client):
-	"""Définition des graphes barres avec une barre horizontale indiquant la position du client"""
+	"""Définition des graphes barres avec une ligne horizontale indiquant la position du client"""
 	with row:
 		st.subheader(title)
 		fig,ax = plt.subplots()
@@ -247,17 +248,17 @@ def chart_bar(title,row,df,col,client):
 def main():
 	"""Fonction principale permettant l'affichage de la fenêtre latérale avec les 3 onglets.
 	"""
-	db_test,df_test,shap_values,lgbm,exp_value=load_data()
-
+	db_test,df_test,shap_values,lgbm,exp_value,logo=load_data()
+	st.sidebar.image(logo)
 	PAGES = [
 	    "Tableau clientèle",
 	    "Visualisation score",
 	    "Comparaison clientèle"
 	]
+	
 	st.sidebar.write('')
 	st.sidebar.write('')
-	st.sidebar.write('')
-	st.sidebar.write('')
+
 	st.sidebar.title('Pages')
 	selection = st.sidebar.radio("Go to", PAGES)
 
