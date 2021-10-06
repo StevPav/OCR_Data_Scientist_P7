@@ -231,7 +231,6 @@ def chart_bar(title,row,df,col,client):
 			
 			data[col]=data[col].astype('int64')
 
-			row.write(df.loc[client,col])
 			plt.axhline(y=sorted(data[col].unique()).index(df.loc[client,col]),xmax=0.95,color='black',linewidth=4)
 			st.pyplot(fig)
 		else:
@@ -241,7 +240,6 @@ def chart_bar(title,row,df,col,client):
 			data=pd.concat([pd.DataFrame({"Pourcentage":data0,'TARGET':0}),pd.DataFrame({'Pourcentage':data1,'TARGET':1})]).reset_index().rename(columns={'index':col})
 			sns.barplot(data=data,x='Pourcentage', y=col, hue='TARGET', palette=['green','red'], order=sorted(data[col].unique()));
 			
-			row.write(df.loc[client,col])
 			plt.axhline(y=sorted(data[col].unique()).index(df.loc[client,col]),xmax=0.95,color='black',linewidth=4)
 			st.pyplot(fig)
 
